@@ -33,8 +33,11 @@ public class Main extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player&&label.equalsIgnoreCase("Glowing")&&args.length==1){
+            Player cmdplayer = Bukkit.getServer().getPlayer(args[0]);
             if (Bukkit.getServer().getPlayer(args[0]).isOnline()){
-
+                PlayerGroup.put(cmdplayer.getUniqueId(),true);
+                cmdplayer.setGlowing(true);
+                sender.sendMessage("成功给他丢到第二组");
             }else {
                 sender.sendMessage("他不在线");
             }
@@ -64,6 +67,7 @@ public class Main extends JavaPlugin implements Listener {
             Player player =event.getPlayer();
             if (PlayerGroup.get(player.getUniqueId())){
                 event.setCancelled(true);
+                player.sendMessage("您的信息已经被拦截");
             }
         }
     }
