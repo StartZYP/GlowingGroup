@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 public class Main extends JavaPlugin implements Listener {
@@ -32,14 +33,25 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender instanceof Player&&label.equalsIgnoreCase("Glowing")&&args.length==1){
+        if (sender instanceof Player&&label.equalsIgnoreCase("dkf")){
+
+
             Player cmdplayer = Bukkit.getServer().getPlayer(args[0]);
-            if (Bukkit.getServer().getPlayer(args[0]).isOnline()){
+            if (args.length==1&&Bukkit.getServer().getPlayer(args[0]).isOnline()){
                 PlayerGroup.put(cmdplayer.getUniqueId(),true);
                 cmdplayer.setGlowing(true);
                 sender.sendMessage("成功给他丢到第二组");
             }else {
                 sender.sendMessage("他不在线");
+            }
+
+            if (args.length==1&&args[0].equalsIgnoreCase("list")){
+                Set<UUID> uuids = PlayerGroup.keySet();
+                for (UUID uuid:uuids){
+                    if (PlayerGroup.get(uuid).booleanValue()){
+                        sender.sendMessage("玩家名:"+Bukkit.getServer().getPlayer(uuid).getName());
+                    }
+                }
             }
         }
         return super.onCommand(sender, command, label, args);
@@ -65,7 +77,7 @@ public class Main extends JavaPlugin implements Listener {
     public void PlayerDoCommand(PlayerCommandPreprocessEvent event){
         if (event.getMessage().contains("nuke")){
             Player player =event.getPlayer();
-            if (PlayerGroup.get(player.getUniqueId())){
+            if (!PlayerGroup.get(player.getUniqueId())){
                 event.setCancelled(true);
                 player.sendMessage("您的信息已经被拦截");
             }
